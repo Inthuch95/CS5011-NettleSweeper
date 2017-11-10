@@ -18,11 +18,9 @@ public class LogicalAgent {
 	}
 	
 	private void openCell(int row, int col) {
-		// open an unmarked cell
-		if (currentWorld[row][col].getNumber() == UNMARKED) {
-			int number = ns.getCellInfo(row, col);
-			currentWorld[row][col].setNumber(number); 
-		}
+		// ask the game to reveal the number behind the cell 
+		int number = ns.getCellInfo(row, col);
+		currentWorld[row][col].setNumber(number);
 	}
 	
 	private void markCell(int row, int col) {

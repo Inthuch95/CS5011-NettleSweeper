@@ -1,7 +1,7 @@
 package game;
 
 /**
- * Represents each cell in a nettle world
+ * The class that represents each cell in a nettle world
  *
  */
 public class Cell {
@@ -16,6 +16,22 @@ public class Cell {
 		this.row = row;
 		this.col = col;
 		this.number = number;
+	}
+	
+	/**
+	 * Get the row number of the cell
+	 * @return the row of the cell
+	 */
+	public int getRow() {
+		return this.row;
+	}
+	
+	/**
+	 * Get the column number of the cell
+	 * @return the column of the cell
+	 */
+	public int getCol() {
+		return this.col;
 	}
 	
 	/**
@@ -36,6 +52,7 @@ public class Cell {
 	
 	@Override
 	public String toString() {
+		// print the state of the cell
 		String output;
 		if (this.number == -2) {
 			output = "?";
