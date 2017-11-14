@@ -21,6 +21,7 @@ public class LogicalAgent {
 		// ask the game to reveal the number behind the cell 
 		int number = ns.getCellNumber(row, col);
 		currentWorld[row][col].setNumber(number);
+		// update list of opened and unopened cells
 		unopened.remove(currentWorld[row][col]);
 		opened.add(currentWorld[row][col]);
 		// open all neighbors if cell's value is 0
@@ -32,13 +33,50 @@ public class LogicalAgent {
 	}
 	
 	public void openAllNeighborCells(int row, int col) {
-		// open all valid neighbors
+		// open all valid neighbors of current cell
+		// cell to the north
+		if (isValidNeighbor(row - 1, col) && !opened.contains(currentWorld[row-1][col])) {
+			openCell(row - 1, col);
+		}
+		// cell to the south
+ 		if(isValidNeighbor(row + 1, col) && !opened.contains(currentWorld[row+1][col])) {
+ 			openCell(row + 1, col);
+ 	    }
+ 		// cell to the east
+ 		if(isValidNeighbor(row, col + 1) && !opened.contains(currentWorld[row][col+1])) {
+ 			openCell(row, col + 1);
+ 	    }
+ 		// cell to the west
+ 		if(isValidNeighbor(row, col - 1) && !opened.contains(currentWorld[row][col-1])) {
+ 			openCell(row, col - 1);
+ 	    }
+ 		// cell to the northeast
+		if (isValidNeighbor(row - 1, col + 1) && !opened.contains(currentWorld[row-1][col+1])) {
+			openCell(row - 1, col + 1);
+		}
+		// cell to the northwest
+		if (isValidNeighbor(row - 1, col - 1) && !opened.contains(currentWorld[row-1][col-1])) {
+			openCell(row - 1, col - 1);
+		}
+		// cell to the southeast
+ 		if(isValidNeighbor(row + 1, col + 1) && !opened.contains(currentWorld[row+1][col+1])) {
+ 			openCell(row + 1, col + 1);
+ 	    }
+ 		// cell to the southwest
+ 		if(isValidNeighbor(row + 1, col - 1) && !opened.contains(currentWorld[row+1][col-1])) {
+ 			openCell(row + 1, col - 1);
+ 	    }
+	}
+	
+	private boolean isValidNeighbor(int row, int col) {
+		return !(row < 0 || row >= currentWorld.length || col < 0 || col >= currentWorld.length);
 	}
 	
 	public void markCell(int row, int col) {
 		System.out.println("mark " + row + " " + col);
 		// mark the cell indicating that it contains nettle
 		currentWorld[row][col].setNumber(FLAGGED);
+		// update list of opened and unopened cells
 		unopened.remove(currentWorld[row][col]);
 		opened.add(currentWorld[row][col]);
 	}
@@ -65,13 +103,9 @@ public class LogicalAgent {
 		return this.gameLost;
 	}
 	
-	private boolean isValidNeighbor(int row, int col) {
-		return true;
-	}
-	
 	private void createGameWorld() {
 		// create game world for the agent
-		// all cells are unprobed at the beginning
+		// all cells are unopened at the beginning
 		int dimension = ns.getDimension();
 		currentWorld = new Cell[dimension][dimension];
 		for (int i = 0; i < dimension; i++) {
