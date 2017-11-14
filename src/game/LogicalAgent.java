@@ -35,41 +35,43 @@ public class LogicalAgent {
 	public void openAllNeighborCells(int row, int col) {
 		// open all valid neighbors of current cell
 		// cell to the north
-		if (isValidNeighbor(row - 1, col) && !opened.contains(currentWorld[row-1][col])) {
+		if (isValidNeighbor(row - 1, col)) {
 			openCell(row - 1, col);
 		}
 		// cell to the south
- 		if(isValidNeighbor(row + 1, col) && !opened.contains(currentWorld[row+1][col])) {
+ 		if(isValidNeighbor(row + 1, col)) {
  			openCell(row + 1, col);
  	    }
  		// cell to the east
- 		if(isValidNeighbor(row, col + 1) && !opened.contains(currentWorld[row][col+1])) {
+ 		if(isValidNeighbor(row, col + 1)) {
  			openCell(row, col + 1);
  	    }
  		// cell to the west
- 		if(isValidNeighbor(row, col - 1) && !opened.contains(currentWorld[row][col-1])) {
+ 		if(isValidNeighbor(row, col - 1)) {
  			openCell(row, col - 1);
  	    }
  		// cell to the northeast
-		if (isValidNeighbor(row - 1, col + 1) && !opened.contains(currentWorld[row-1][col+1])) {
+		if (isValidNeighbor(row - 1, col + 1)) {
 			openCell(row - 1, col + 1);
 		}
 		// cell to the northwest
-		if (isValidNeighbor(row - 1, col - 1) && !opened.contains(currentWorld[row-1][col-1])) {
+		if (isValidNeighbor(row - 1, col - 1)) {
 			openCell(row - 1, col - 1);
 		}
 		// cell to the southeast
- 		if(isValidNeighbor(row + 1, col + 1) && !opened.contains(currentWorld[row+1][col+1])) {
+ 		if(isValidNeighbor(row + 1, col + 1)) {
  			openCell(row + 1, col + 1);
  	    }
  		// cell to the southwest
- 		if(isValidNeighbor(row + 1, col - 1) && !opened.contains(currentWorld[row+1][col-1])) {
+ 		if(isValidNeighbor(row + 1, col - 1)) {
  			openCell(row + 1, col - 1);
  	    }
 	}
 	
 	private boolean isValidNeighbor(int row, int col) {
-		return !(row < 0 || row >= currentWorld.length || col < 0 || col >= currentWorld.length);
+		// returns true if cell is unopened and not out of bound
+		return !(row < 0 || row >= currentWorld.length || col < 0 || col >= currentWorld.length)
+				&& !(opened.contains(currentWorld[row][col]));
 	}
 	
 	public void markCell(int row, int col) {
