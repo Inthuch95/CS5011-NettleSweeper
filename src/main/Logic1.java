@@ -13,8 +13,14 @@ public class Logic1 {
 		// create game with selected nettle world
 		NettleSweeper ns = new NettleSweeper(world);
 		LogicalAgent agent = new LogicalAgent(ns);
-		// solve the nettle world
-		agent.solve();
+		// use the logical agent to solve the nettle world
+		solve(agent);
+	}
+	
+	private static void solve(LogicalAgent agent) {
+		// probe (0, 0) first
+		agent.openCell(0, 0);
+		agent.printWorld();
 	}
 
 	private static int[][] getWorld(String difficulty, int worldNumber) {

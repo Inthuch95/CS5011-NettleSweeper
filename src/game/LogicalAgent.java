@@ -11,24 +11,18 @@ public class LogicalAgent {
 		createGameWorld();
 	}
 	
-	public void solve() {
-		// probe (0, 0) first
-		openCell(0, 0);
-		printWorld();
-	}
-	
-	private void openCell(int row, int col) {
+	public void openCell(int row, int col) {
 		// ask the game to reveal the number behind the cell 
-		int number = ns.getCellInfo(row, col);
+		int number = ns.getCellNumber(row, col);
 		currentWorld[row][col].setNumber(number);
 	}
 	
-	private void markCell(int row, int col) {
+	public void markCell(int row, int col) {
 		// mark the cell indicating that it contains nettle
 		currentWorld[row][col].setNumber(FLAGGED);
 	}
 	
-	private void printWorld() {
+	public void printWorld() {
 		// print the status of current world
 		for (int i = 0; i < currentWorld.length; i++) {
 			for (int j = 0;j < currentWorld[i].length;j++) {

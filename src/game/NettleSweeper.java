@@ -7,7 +7,7 @@ public class NettleSweeper {
 		this.world = world;
 	}
 	
-	public int getCellInfo(int row, int col) {
+	public int getCellNumber(int row, int col) {
 		return this.world[row][col];
 	}
 	
