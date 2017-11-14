@@ -1,10 +1,15 @@
 package game;
 
+import java.util.ArrayList;
+
 public class LogicalAgent {
-	private NettleSweeper ns;
-	private Cell[][] currentWorld;
 	private final int UNMARKED = -2;
 	private final int FLAGGED = -3; 
+	private NettleSweeper ns;
+	private Cell[][] currentWorld;
+	private boolean gameLost = false;
+	private ArrayList<Cell> unopened = new ArrayList<Cell>();
+	private ArrayList<Cell> opened = new ArrayList<Cell>();
 	
 	public LogicalAgent(NettleSweeper ns) {
 		this.ns = ns;
@@ -12,24 +17,56 @@ public class LogicalAgent {
 	}
 	
 	public void openCell(int row, int col) {
+		System.out.println("reveal " + row + " " + col);
 		// ask the game to reveal the number behind the cell 
 		int number = ns.getCellNumber(row, col);
 		currentWorld[row][col].setNumber(number);
+		unopened.remove(currentWorld[row][col]);
+		opened.add(currentWorld[row][col]);
+		// open all neighbors if cell's value is 0
+		if (currentWorld[row][col].getNumber() == 0) {
+			openAllNeighborCells(row, col);
+		}
+		// check if the cell contain nettle
+		isNettle(currentWorld[row][col]);
+	}
+	
+	public void openAllNeighborCells(int row, int col) {
+		// open all valid neighbors
 	}
 	
 	public void markCell(int row, int col) {
+		System.out.println("mark " + row + " " + col);
 		// mark the cell indicating that it contains nettle
 		currentWorld[row][col].setNumber(FLAGGED);
+		unopened.remove(currentWorld[row][col]);
+		opened.add(currentWorld[row][col]);
 	}
 	
 	public void printWorld() {
 		// print the status of current world
+		System.out.println("--------------------");
 		for (int i = 0; i < currentWorld.length; i++) {
 			for (int j = 0;j < currentWorld[i].length;j++) {
 				System.out.print(currentWorld[i][j] + " ");
 			}
 			System.out.print("\n");
 		}
+		System.out.println("--------------------");
+	}
+	
+	public void isNettle(Cell currentCell) {
+		if (currentCell.getNumber() == -1) {
+			gameLost = true;
+		}
+	}
+	
+	public boolean getGameLost() {
+		return this.gameLost;
+	}
+	
+	private boolean isValidNeighbor(int row, int col) {
+		return true;
 	}
 	
 	private void createGameWorld() {
@@ -40,6 +77,7 @@ public class LogicalAgent {
 		for (int i = 0; i < dimension; i++) {
 			for (int j = 0;j < dimension;j++) {
 				currentWorld[i][j] = new Cell(i, j, UNMARKED);
+				unopened.add(currentWorld[i][j]);
 			}
 		}
 	}
