@@ -14,4 +14,11 @@ public class NettleSweeper {
 	public int getDimension() {
 		return this.world.length;
 	}
+	
+	public boolean isGameOver(int cellNumber) {
+		if (cellNumber == -1) {
+			return true;
+		}
+		return false;
+	}
 }

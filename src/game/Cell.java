@@ -55,9 +55,11 @@ public class Cell {
 		// print the state of the cell
 		String output;
 		if (this.number == -2) {
-			output = "?";
+			output = "#";
 		} else if (this.number == -3) {
 			output = "F";
+		} else if (this.number == -1) {
+			output = "N";
 		} else {
 			output = Integer.toString(this.number);
 		}
