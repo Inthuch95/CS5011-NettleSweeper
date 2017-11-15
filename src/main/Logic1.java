@@ -21,14 +21,17 @@ public class Logic1 {
 	}
 	
 	private static void solve(LogicalAgent agent) {
-		ArrayList<Cell> unopened = agent.getUnopened();
+		ArrayList<Cell> covered = agent.getCovered();
+		ArrayList<Cell> marked = agent.getMarked();
+		int totalNettle = agent.getTotalNettle();
+		boolean gameWon = false;
 		// uncover cell(0, 0) first
 		System.out.println("Nettle World\n");
 		agent.openCell(0, 0);
 		agent.printWorld();
-		while (!unopened.isEmpty()) {
+		while (!covered.isEmpty() && marked.size() < totalNettle) {
 			agent.setWorldChanged(false);
-			// attempt to use SPS first
+			// attempt to use SPS
 			System.out.println("Solving with SPS");
 			agent.singlePointStrategy();
 			// if SPS cannot make further changes to the world, resort to RGS
@@ -38,14 +41,26 @@ public class Logic1 {
 			}
 			// print current status of the nettle world
 			agent.printWorld();
+			// check if all nettles are marked
+			if (marked.size() == totalNettle) {
+				System.out.println("Found all nettles");
+				// uncover the rest of the cells and end the game
+				agent.openAllCells();
+				gameWon = true;
+				break;
+			}
 			// if the agent uncover a nettle then the game is over
 			if (agent.getGameOver()) {
+				System.out.println("\nSummary");
 				System.out.println("game lost");
+				System.out.println("random guess: " + agent.getRandomGuess());
 				break;
 			}
 		}
 		// we win the game if all cells are uncovered
-		if (unopened.isEmpty()) {
+		if (gameWon) {
+			System.out.println("\nSummary");
+			agent.printWorld();
 			System.out.println("game won");
 			System.out.println("random guess: " + agent.getRandomGuess());
 		}

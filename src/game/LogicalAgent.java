@@ -5,25 +5,28 @@ import java.util.Random;
 
 public class LogicalAgent {
 	private final int UNCOVERED = -2;
-	private final int FLAGGED = -3; 
+	private final int MARKED = -3; 
 	private NettleSweeper ns;
 	private Cell[][] currentWorld;
 	private boolean gameOver = false;
-	private ArrayList<Cell> unopened = new ArrayList<Cell>();
-	private ArrayList<Cell> opened = new ArrayList<Cell>();
+	private ArrayList<Cell> covered = new ArrayList<Cell>();
+	private ArrayList<Cell> uncovered = new ArrayList<Cell>();
+	private ArrayList<Cell> marked = new ArrayList<Cell>();
 	private boolean worldChanged;
 	private int randomGuess = 0;
+	private int totalNettle;
 	
 	public LogicalAgent(NettleSweeper ns) {
 		this.ns = ns;
+		totalNettle = ns.getNumberOfNettle();
 		createGameWorld();
 	}
 	
 	public void randomGuessStrategy() {
-		// pick a random cell from unopened list and uncover that cell
+		// pick a random cell from covered list and uncover that cell
 		Random randomGenerator = new Random();
-		int index = randomGenerator.nextInt(unopened.size());
-		Cell cell = unopened.get(index);
+		int index = randomGenerator.nextInt(covered.size());
+		Cell cell = covered.get(index);
 		openCell(cell.getRow(), cell.getCol());
 		randomGuess++;
 	}
@@ -31,7 +34,7 @@ public class LogicalAgent {
 	public void singlePointStrategy() {
 		for (int row = 0; row < currentWorld.length; row++) {
 			for (int col = 0; col < currentWorld.length; col++) {
-				if (unopened.contains(currentWorld[row][col])) {
+				if (covered.contains(currentWorld[row][col])) {
 					checkAllNeighbors(row, col);
 				}
 			}
@@ -41,7 +44,7 @@ public class LogicalAgent {
 	private void checkAllNeighbors(int row, int col) {
 		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
 		for (Cell neighbor : neighbors) {
-			if (opened.contains(neighbor)) {
+			if (uncovered.contains(neighbor) || marked.contains(neighbor)) {
 				if (allFreeNeighbors(neighbor)) {
 					openCell(row, col);
 					
@@ -59,7 +62,7 @@ public class LogicalAgent {
 		ArrayList<Cell> neighbors = getAllNeighbors(cell.getRow(), cell.getCol());
 		int nettleCount = 0;
 		for (Cell neighbor : neighbors) {
-			if (neighbor.getNumber() == FLAGGED) {
+			if (neighbor.getNumber() == MARKED) {
 				nettleCount++;
 			}
 		}
@@ -79,7 +82,7 @@ public class LogicalAgent {
 			if (neighbor.getNumber() == UNCOVERED) {
 				unmarkedCount++;
 			}
-			if (neighbor.getNumber() == FLAGGED) {
+			if (neighbor.getNumber() == MARKED) {
 				nettleCount++;
 			}
 		}
@@ -95,9 +98,9 @@ public class LogicalAgent {
 		// ask the game to reveal the number behind the cell 
 		int number = ns.getCellNumber(row, col);
 		currentWorld[row][col].setNumber(number);
-		// update list of opened and unopened cells
-		unopened.remove(currentWorld[row][col]);
-		opened.add(currentWorld[row][col]);
+		// update list of uncovered and covered cells
+		covered.remove(currentWorld[row][col]);
+		uncovered.add(currentWorld[row][col]);
 		if (number == 0) {
 			openAllNeighborCells(row, col);
 		}
@@ -111,9 +114,18 @@ public class LogicalAgent {
 		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
 		
 		for (Cell neighbor : neighbors) {
-			if (!opened.contains(neighbor)) {
+			if (!uncovered.contains(neighbor) && !marked.contains(neighbor)) {
 				openCell(neighbor.getRow(), neighbor.getCol());
 			}
+		}
+	}
+	
+	public void openAllCells() {
+		// open the remaining cells
+		ArrayList<Cell> remainingCells = new ArrayList<Cell>();
+		remainingCells.addAll(covered);
+		for (Cell cell : remainingCells) {
+			openCell(cell.getRow(), cell.getCol());
 		}
 	}
 	
@@ -155,17 +167,17 @@ public class LogicalAgent {
 	}
 	
 	private boolean isValidNeighbor(int row, int col) {
-		// returns true if cell is unopened and not out of bound
+		// returns true if cell is not out of bound
 		return !(row < 0 || row >= currentWorld.length || col < 0 || col >= currentWorld.length);
 	}
 	
 	public void markCell(int row, int col) {
 		System.out.println("mark " + row + " " + col);
 		// mark the cell indicating that it contains nettle
-		currentWorld[row][col].setNumber(FLAGGED);
-		// update list of opened and unopened cells
-		unopened.remove(currentWorld[row][col]);
-		opened.add(currentWorld[row][col]);
+		currentWorld[row][col].setNumber(MARKED);
+		// update list of uncovered and covered cells
+		covered.remove(currentWorld[row][col]);
+		marked.add(currentWorld[row][col]);
 		worldChanged = true;
 	}
 	
@@ -173,16 +185,24 @@ public class LogicalAgent {
 		return this.gameOver;
 	}
 	
-	public ArrayList<Cell> getUnopened() {
-		return this.unopened;
+	public ArrayList<Cell> getCovered() {
+		return this.covered;
 	}
 	
-	public ArrayList<Cell> getOpened() {
-		return this.opened;
+	public ArrayList<Cell> getUncovered() {
+		return this.uncovered;
+	}
+	
+	public ArrayList<Cell> getMarked() {
+		return this.marked;
 	}
 	
 	public boolean getWorldChanged() {
 		return this.worldChanged;
+	}
+	
+	public int getTotalNettle() {
+		return this.totalNettle;
 	}
 	
 	public int getRandomGuess() {
@@ -207,13 +227,13 @@ public class LogicalAgent {
 	
 	private void createGameWorld() {
 		// create game world for the agent
-		// all cells are unopened at the beginning
+		// all cells are covered at the beginning
 		int dimension = ns.getDimension();
 		currentWorld = new Cell[dimension][dimension];
 		for (int i = 0; i < dimension; i++) {
 			for (int j = 0;j < dimension;j++) {
 				currentWorld[i][j] = new Cell(i, j, UNCOVERED);
-				unopened.add(currentWorld[i][j]);
+				covered.add(currentWorld[i][j]);
 			}
 		}
 	}
