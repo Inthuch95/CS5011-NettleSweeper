@@ -30,8 +30,8 @@ public class LogicalAgent {
 		// 
 		ArrayList<Cell> frontier = getFrontier();
 		System.out.println(frontier);
-		Cell[][] borderingPairs = getBorderingPairs(frontier);
-		System.out.println(Arrays.deepToString(borderingPairs));
+		ArrayList<ArrayList<Cell>> borderingPairs = getBorderingPairs(frontier);
+		System.out.println(borderingPairs);
 	}
 	
 	private ArrayList<Cell> getFrontier() {
@@ -48,14 +48,60 @@ public class LogicalAgent {
 		return frontier;
 	}
 	
-	private Cell[][] getBorderingPairs(ArrayList<Cell> frontier) {
+	private ArrayList<ArrayList<Cell>> getBorderingPairs(ArrayList<Cell> frontier) {
 		// need to refine this
-		Cell[][] borderingPairs = new Cell[frontier.size()-1][2];
-		for (int i = 0; i < frontier.size() - 1; i++) {
-			borderingPairs[i][0] = frontier.get(i);
-			borderingPairs[i][1] = frontier.get(i + 1);
+		ArrayList<ArrayList<Cell>> borderingPairs = new ArrayList<ArrayList<Cell>>();
+		ArrayList<Cell> borderingCells = new ArrayList<Cell>();
+		boolean duplicate;
+		for (int i = 0; i < frontier.size(); i++) {
+			borderingCells = getBorderingCells(frontier.get(i).getRow(), frontier.get(i).getCol());
+			for (Cell cell : borderingCells) {
+				if (frontier.contains(cell)) {
+					ArrayList<Cell> pair = new ArrayList<Cell>();
+					pair.add(frontier.get(i));
+					pair.add(cell);
+					duplicate = checkDuplicatePairs(borderingPairs, pair);
+					if (!duplicate) {
+						borderingPairs.add(pair);
+					}
+				}
+			}
 		}
 		return borderingPairs;
+	}
+	
+	private boolean checkDuplicatePairs(ArrayList<ArrayList<Cell>> borderingPairs
+			, ArrayList<Cell> pair) {
+		boolean duplicate = false;
+		for (int i = 0; i < borderingPairs.size(); i++) {
+			if (borderingPairs.get(i).containsAll(pair)) {
+				duplicate = true;
+				break;
+			}
+		}
+		
+		return duplicate;
+	}
+	
+	private ArrayList<Cell> getBorderingCells(int row, int col) {
+		ArrayList<Cell> borderingCells = new ArrayList<Cell>();
+		// cell to the north
+		if (isValidNeighbor(row - 1, col)) {
+			borderingCells.add(currentWorld[row-1][col]);
+		}
+		// cell to the south
+ 		if(isValidNeighbor(row + 1, col)) {
+ 			borderingCells.add(currentWorld[row+1][col]);
+ 	    }
+ 		// cell to the east
+ 		if(isValidNeighbor(row, col + 1)) {
+ 			borderingCells.add(currentWorld[row][col+1]);
+ 	    }
+ 		// cell to the west
+ 		if(isValidNeighbor(row, col - 1)) {
+ 			borderingCells.add(currentWorld[row][col-1]);
+ 	    }
+ 		return borderingCells;
 	}
 	
 	private boolean coveredNeighborExist(int row, int col) {
