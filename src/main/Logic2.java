@@ -2,7 +2,7 @@ package main;
 
 import java.util.ArrayList;
 
-import agent.ESSAgent;
+import agent.EESAgent;
 import game.Cell;
 import game.NettleSweeper;
 import game.Worlds;
@@ -14,12 +14,12 @@ public class Logic2 {
 		int[][] world = getWorld(difficulty, worldNumber);
 		// create game with selected nettle world
 		NettleSweeper ns = new NettleSweeper(world);
-		ESSAgent agent = new ESSAgent(ns);
+		EESAgent agent = new EESAgent(ns);
 		// use the logical agent to solve the nettle world
 		solve(agent);
 	}
 	
-	private static void solve(ESSAgent agent) {
+	private static void solve(EESAgent agent) {
 		ArrayList<Cell> covered = agent.getCovered();
 		ArrayList<Cell> marked = agent.getMarked();
 		int totalNettle = agent.getTotalNettle();

@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import game.Cell;
 import game.NettleSweeper;
 
-public class ESSAgent extends BasicAgent {
+public class EESAgent extends BasicAgent {
 	private Cell[][] currentWorld;
 	private ArrayList<Cell> covered = new ArrayList<Cell>();
 	private ArrayList<Cell> uncovered = new ArrayList<Cell>();
 	private ArrayList<Cell> marked = new ArrayList<Cell>();
 	
-	public ESSAgent (NettleSweeper ns) {
+	public EESAgent (NettleSweeper ns) {
 		super(ns);
 		covered = this.getCovered();
 		uncovered = this.getUncovered();
