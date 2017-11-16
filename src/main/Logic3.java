@@ -1,6 +1,6 @@
 package main;
 
-import agent.LogicalAgent;
+import agent.DLSAgent;
 import game.NettleSweeper;
 import game.Worlds;
 
@@ -12,12 +12,12 @@ public class Logic3 {
 		int[][] world = getWorld(difficulty, worldNumber);
 		// create game with selected nettle world
 		NettleSweeper ns = new NettleSweeper(world);
-		LogicalAgent agent = new LogicalAgent(ns);
+		DLSAgent agent = new DLSAgent(ns);
 		// use the logical agent to solve the nettle world
 		solve(agent);
 	}
 	
-	private static void solve(LogicalAgent agent) {
+	private static void solve(DLSAgent agent) {
 		// probe (0, 0) first
 		agent.openCell(0, 0);
 		agent.printWorld();

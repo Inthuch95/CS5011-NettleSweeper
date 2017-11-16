@@ -1,15 +1,14 @@
 package agent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 import game.Cell;
 import game.NettleSweeper;
 
-public class LogicalAgent {
-	private final int UNCOVERED = -2;
-	private final int MARKED = -3; 
+public class BasicAgent {
+	protected final int UNMARKED = -2;
+	protected final int MARKED = -3; 
 	private NettleSweeper ns;
 	private Cell[][] currentWorld;
 	private boolean gameOver = false;
@@ -20,98 +19,10 @@ public class LogicalAgent {
 	private int randomGuess = 0;
 	private int totalNettle;
 	
-	public LogicalAgent(NettleSweeper ns) {
+	public BasicAgent(NettleSweeper ns) {
 		this.ns = ns;
 		totalNettle = ns.getNumberOfNettle();
 		createGameWorld();
-	}
-	
-	public void easyEquationStrategy() {
-		// 
-		ArrayList<Cell> frontier = getFrontier();
-		System.out.println(frontier);
-		ArrayList<ArrayList<Cell>> borderingPairs = getBorderingPairs(frontier);
-		System.out.println(borderingPairs);
-	}
-	
-	private ArrayList<Cell> getFrontier() {
-		ArrayList<Cell> frontier = new ArrayList<Cell>();
-		// get uncovered cells which have at least one covered neighbor
-		for (int row = 0; row < currentWorld.length; row++) {
-			for (int col = 0; col < currentWorld.length; col++) {
-				if (coveredNeighborExist(row, col) 
-						&& uncovered.contains(currentWorld[row][col])) {
-					frontier.add(currentWorld[row][col]);
-				}
-			}
-		}
-		return frontier;
-	}
-	
-	private ArrayList<ArrayList<Cell>> getBorderingPairs(ArrayList<Cell> frontier) {
-		// need to refine this
-		ArrayList<ArrayList<Cell>> borderingPairs = new ArrayList<ArrayList<Cell>>();
-		ArrayList<Cell> borderingCells = new ArrayList<Cell>();
-		boolean duplicate;
-		for (int i = 0; i < frontier.size(); i++) {
-			borderingCells = getBorderingCells(frontier.get(i).getRow(), frontier.get(i).getCol());
-			for (Cell cell : borderingCells) {
-				if (frontier.contains(cell)) {
-					ArrayList<Cell> pair = new ArrayList<Cell>();
-					pair.add(frontier.get(i));
-					pair.add(cell);
-					duplicate = checkDuplicatePairs(borderingPairs, pair);
-					if (!duplicate) {
-						borderingPairs.add(pair);
-					}
-				}
-			}
-		}
-		return borderingPairs;
-	}
-	
-	private boolean checkDuplicatePairs(ArrayList<ArrayList<Cell>> borderingPairs
-			, ArrayList<Cell> pair) {
-		boolean duplicate = false;
-		for (int i = 0; i < borderingPairs.size(); i++) {
-			if (borderingPairs.get(i).containsAll(pair)) {
-				duplicate = true;
-				break;
-			}
-		}
-		
-		return duplicate;
-	}
-	
-	private ArrayList<Cell> getBorderingCells(int row, int col) {
-		ArrayList<Cell> borderingCells = new ArrayList<Cell>();
-		// cell to the north
-		if (isValidNeighbor(row - 1, col)) {
-			borderingCells.add(currentWorld[row-1][col]);
-		}
-		// cell to the south
- 		if(isValidNeighbor(row + 1, col)) {
- 			borderingCells.add(currentWorld[row+1][col]);
- 	    }
- 		// cell to the east
- 		if(isValidNeighbor(row, col + 1)) {
- 			borderingCells.add(currentWorld[row][col+1]);
- 	    }
- 		// cell to the west
- 		if(isValidNeighbor(row, col - 1)) {
- 			borderingCells.add(currentWorld[row][col-1]);
- 	    }
- 		return borderingCells;
-	}
-	
-	private boolean coveredNeighborExist(int row, int col) {
-		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
-		for (Cell neighbor : neighbors) {
-			if (covered.contains(neighbor)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	public void singlePointStrategy() {
@@ -161,7 +72,7 @@ public class LogicalAgent {
 		int nettleCount = 0;
 		int unmarkedCount = 0;
 		for (Cell neighbor : neighbors) {
-			if (neighbor.getNumber() == UNCOVERED) {
+			if (neighbor.getNumber() == UNMARKED) {
 				unmarkedCount++;
 			}
 			if (neighbor.getNumber() == MARKED) {
@@ -220,7 +131,7 @@ public class LogicalAgent {
 		}
 	}
 	
-	private ArrayList<Cell> getAllNeighbors(int row, int col) {
+	public ArrayList<Cell> getAllNeighbors(int row, int col) {
 		ArrayList<Cell> neighbors = new ArrayList<Cell>();
 		// cell to the north
 		if (isValidNeighbor(row - 1, col)) {
@@ -257,7 +168,7 @@ public class LogicalAgent {
  		return neighbors;
 	}
 	
-	private boolean isValidNeighbor(int row, int col) {
+	public boolean isValidNeighbor(int row, int col) {
 		// returns true if cell is not out of bound
 		return !(row < 0 || row >= currentWorld.length || col < 0 || col >= currentWorld.length);
 	}
@@ -274,6 +185,10 @@ public class LogicalAgent {
 	
 	public boolean getGameOver() {
 		return this.gameOver;
+	}
+	
+	public Cell[][] getCurrentWorld() {
+		return this.currentWorld;
 	}
 	
 	public ArrayList<Cell> getCovered() {
@@ -337,7 +252,7 @@ public class LogicalAgent {
 		currentWorld = new Cell[dimension][dimension];
 		for (int i = 0; i < dimension; i++) {
 			for (int j = 0;j < dimension;j++) {
-				currentWorld[i][j] = new Cell(i, j, UNCOVERED);
+				currentWorld[i][j] = new Cell(i, j, UNMARKED);
 				covered.add(currentWorld[i][j]);
 			}
 		}
