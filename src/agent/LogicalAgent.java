@@ -1,7 +1,11 @@
-package game;
+package agent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+
+import game.Cell;
+import game.NettleSweeper;
 
 public class LogicalAgent {
 	private final int UNCOVERED = -2;
@@ -22,13 +26,46 @@ public class LogicalAgent {
 		createGameWorld();
 	}
 	
-	public void randomGuessStrategy() {
-		// pick a random cell from covered list and uncover that cell
-		Random randomGenerator = new Random();
-		int index = randomGenerator.nextInt(covered.size());
-		Cell cell = covered.get(index);
-		openCell(cell.getRow(), cell.getCol());
-		randomGuess++;
+	public void easyEquationStrategy() {
+		// 
+		ArrayList<Cell> frontier = getFrontier();
+		System.out.println(frontier);
+		Cell[][] borderingPairs = getBorderingPairs(frontier);
+		System.out.println(Arrays.deepToString(borderingPairs));
+	}
+	
+	private ArrayList<Cell> getFrontier() {
+		ArrayList<Cell> frontier = new ArrayList<Cell>();
+		// get uncovered cells which have at least one covered neighbor
+		for (int row = 0; row < currentWorld.length; row++) {
+			for (int col = 0; col < currentWorld.length; col++) {
+				if (coveredNeighborExist(row, col) 
+						&& uncovered.contains(currentWorld[row][col])) {
+					frontier.add(currentWorld[row][col]);
+				}
+			}
+		}
+		return frontier;
+	}
+	
+	private Cell[][] getBorderingPairs(ArrayList<Cell> frontier) {
+		// need to refine this
+		Cell[][] borderingPairs = new Cell[frontier.size()-1][2];
+		for (int i = 0; i < frontier.size() - 1; i++) {
+			borderingPairs[i][0] = frontier.get(i);
+			borderingPairs[i][1] = frontier.get(i + 1);
+		}
+		return borderingPairs;
+	}
+	
+	private boolean coveredNeighborExist(int row, int col) {
+		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
+		for (Cell neighbor : neighbors) {
+			if (covered.contains(neighbor)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void singlePointStrategy() {
@@ -47,7 +84,6 @@ public class LogicalAgent {
 			if (uncovered.contains(neighbor) || marked.contains(neighbor)) {
 				if (allFreeNeighbors(neighbor)) {
 					openCell(row, col);
-					
 					break;
 				} else if (allMarkedNeighbors(neighbor)) {
 					markCell(row, col);
@@ -91,6 +127,15 @@ public class LogicalAgent {
 		} else {
 			return false;
 		}
+	}
+	
+	public void randomGuessStrategy() {
+		// pick a random cell from covered list and uncover that cell
+		Random randomGenerator = new Random();
+		int index = randomGenerator.nextInt(covered.size());
+		Cell cell = covered.get(index);
+		openCell(cell.getRow(), cell.getCol());
+		randomGuess++;
 	}
 	
 	public void openCell(int row, int col) {
@@ -223,6 +268,20 @@ public class LogicalAgent {
 			System.out.print("\n");
 		}
 		System.out.println("--------------------");
+	}
+	
+	public void printSummary() {
+		if (!gameOver) {
+			System.out.println("\nSummary");
+			printWorld();
+			System.out.println("game won");
+			System.out.println("random guess: " + randomGuess);
+		} else {
+			System.out.println("\nSummary");
+			printWorld();
+			System.out.println("game lost");
+			System.out.println("random guess: " + randomGuess);
+		}
 	}
 	
 	private void createGameWorld() {

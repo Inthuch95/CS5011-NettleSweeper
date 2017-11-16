@@ -1,6 +1,6 @@
 package main;
 
-import game.LogicalAgent;
+import agent.LogicalAgent;
 import game.NettleSweeper;
 import game.Worlds;
 

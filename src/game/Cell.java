@@ -10,7 +10,7 @@ public class Cell {
 	public Cell(int row, int col, int number) {
 		/**
 		 * number
-		 * -2 indicates unprobed cell
+		 * -2 indicates covered cell
 		 * -3 flagged cell
 		 */
 		this.row = row;

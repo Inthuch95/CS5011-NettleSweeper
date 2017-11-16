@@ -2,8 +2,8 @@ package main;
 
 import java.util.ArrayList;
 
+import agent.LogicalAgent;
 import game.Cell;
-import game.LogicalAgent;
 import game.NettleSweeper;
 import game.Worlds;
 
@@ -24,9 +24,8 @@ public class Logic1 {
 		ArrayList<Cell> covered = agent.getCovered();
 		ArrayList<Cell> marked = agent.getMarked();
 		int totalNettle = agent.getTotalNettle();
-		boolean gameWon = false;
-		// uncover cell(0, 0) first
 		System.out.println("Nettle World\n");
+		// uncover cell(0, 0) first
 		agent.openCell(0, 0);
 		agent.printWorld();
 		while (!covered.isEmpty() && marked.size() < totalNettle) {
@@ -46,24 +45,14 @@ public class Logic1 {
 				System.out.println("Found all nettles");
 				// uncover the rest of the cells and end the game
 				agent.openAllCells();
-				gameWon = true;
 				break;
 			}
 			// if the agent uncover a nettle then the game is over
 			if (agent.getGameOver()) {
-				System.out.println("\nSummary");
-				System.out.println("game lost");
-				System.out.println("random guess: " + agent.getRandomGuess());
 				break;
 			}
 		}
-		// we win the game if all cells are uncovered
-		if (gameWon) {
-			System.out.println("\nSummary");
-			agent.printWorld();
-			System.out.println("game won");
-			System.out.println("random guess: " + agent.getRandomGuess());
-		}
+		agent.printSummary();
 	}
 
 	private static int[][] getWorld(String difficulty, int worldNumber) {
