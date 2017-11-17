@@ -29,13 +29,14 @@ public class BasicAgent {
 		for (int row = 0; row < currentWorld.length; row++) {
 			for (int col = 0; col < currentWorld.length; col++) {
 				if (covered.contains(currentWorld[row][col])) {
-					checkAllNeighbors(row, col);
+					takeAppropriateAction(row, col);
+					attemptToFinish();
 				}
 			}
 		}
 	}
 	
-	private void checkAllNeighbors(int row, int col) {
+	private void takeAppropriateAction(int row, int col) {
 		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
 		for (Cell neighbor : neighbors) {
 			if (uncovered.contains(neighbor) || marked.contains(neighbor)) {
@@ -93,6 +94,7 @@ public class BasicAgent {
 		Cell cell = covered.get(index);
 		openCell(cell.getRow(), cell.getCol());
 		randomGuess++;
+		attemptToFinish();
 	}
 	
 	public void openCell(int row, int col) {
@@ -128,6 +130,39 @@ public class BasicAgent {
 		remainingCells.addAll(covered);
 		for (Cell cell : remainingCells) {
 			openCell(cell.getRow(), cell.getCol());
+		}
+	}
+	
+	public void markCell(int row, int col) {
+		System.out.println("mark " + row + " " + col);
+		// mark the cell indicating that it contains nettle
+		currentWorld[row][col].setNumber(MARKED);
+		// update list of uncovered and covered cells
+		covered.remove(currentWorld[row][col]);
+		marked.add(currentWorld[row][col]);
+		worldChanged = true;
+	}
+	
+	public void markAllCells() {
+		// mark the remaining cells
+		ArrayList<Cell> remainingCells = new ArrayList<Cell>();
+		remainingCells.addAll(covered);
+		for (Cell cell : remainingCells) {
+			markCell(cell.getRow(), cell.getCol());
+		}
+	}
+	
+	public void attemptToFinish() {
+		// uncover/mark the rest of the cells if it is safe to do so
+		int remainingNettle = totalNettle - marked.size();
+		if (marked.size() == totalNettle) {
+			System.out.println("marked all nettles...");
+			System.out.println("revealing the rest of the cells...");
+			openAllCells();
+		} else if (remainingNettle == covered.size() && !covered.isEmpty()) {
+			System.out.println("uncovered all safe cells...");
+			System.out.println("marking the rest of the cells...");
+			markAllCells();
 		}
 	}
 	
@@ -171,16 +206,6 @@ public class BasicAgent {
 	public boolean isValidNeighbor(int row, int col) {
 		// returns true if cell is not out of bound
 		return !(row < 0 || row >= currentWorld.length || col < 0 || col >= currentWorld.length);
-	}
-	
-	public void markCell(int row, int col) {
-		System.out.println("mark " + row + " " + col);
-		// mark the cell indicating that it contains nettle
-		currentWorld[row][col].setNumber(MARKED);
-		// update list of uncovered and covered cells
-		covered.remove(currentWorld[row][col]);
-		marked.add(currentWorld[row][col]);
-		worldChanged = true;
 	}
 	
 	public boolean getGameOver() {

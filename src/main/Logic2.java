@@ -21,13 +21,11 @@ public class Logic2 {
 	
 	private static void solve(EESAgent agent) {
 		ArrayList<Cell> covered = agent.getCovered();
-		ArrayList<Cell> marked = agent.getMarked();
-		int totalNettle = agent.getTotalNettle();
 		System.out.println("Nettle World\n");
 		// uncover cell(0, 0) first
 		agent.openCell(0, 0);
 		agent.printWorld();
-		while (!covered.isEmpty() && marked.size() < totalNettle) {
+		while (!covered.isEmpty()) {
 			agent.setWorldChanged(false);
 			// attempt to use SPS
 			System.out.println("solving with SPS");
@@ -43,13 +41,6 @@ public class Logic2 {
 			}
 			// print current status of the nettle world
 			agent.printWorld();
-			// check if all nettles are marked
-			if (marked.size() == totalNettle) {
-				System.out.println("Found all nettles");
-				// uncover the rest of the cells and end the game
-				agent.openAllCells();
-				break;
-			}
 			// if the agent uncover a nettle then the game is over
 			if (agent.getGameOver()) {
 				break;

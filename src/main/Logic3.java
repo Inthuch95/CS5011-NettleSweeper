@@ -1,6 +1,9 @@
 package main;
 
+import java.util.ArrayList;
+
 import agent.DLSAgent;
+import game.Cell;
 import game.NettleSweeper;
 import game.Worlds;
 
@@ -18,9 +21,33 @@ public class Logic3 {
 	}
 	
 	private static void solve(DLSAgent agent) {
-		// probe (0, 0) first
+		ArrayList<Cell> covered = agent.getCovered();
+		System.out.println("Nettle World\n");
+		// uncover cell(0, 0) first
 		agent.openCell(0, 0);
 		agent.printWorld();
+		while (!covered.isEmpty()) {
+			agent.setWorldChanged(false);
+			// attempt to use SPS
+			System.out.println("solving with SPS");
+			agent.singlePointStrategy();
+			if (!agent.getWorldChanged()) {
+				System.out.println("solving with DLS");
+				agent.DLStrategy();
+			}
+			// if other strategies cannot make further changes to the world, resort to RGS
+			if (!agent.getWorldChanged()) {
+				System.out.println("resort to RGS");
+				agent.randomGuessStrategy();
+			}
+			// print current status of the nettle world
+			agent.printWorld();
+			// if the agent uncover a nettle then the game is over
+			if (agent.getGameOver()) {
+				break;
+			}
+		}
+		agent.printSummary();
 	}
 
 	private static int[][] getWorld(String difficulty, int worldNumber) {

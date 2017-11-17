@@ -9,13 +9,11 @@ public class EESAgent extends BasicAgent {
 	private Cell[][] currentWorld;
 	private ArrayList<Cell> covered = new ArrayList<Cell>();
 	private ArrayList<Cell> uncovered = new ArrayList<Cell>();
-	private ArrayList<Cell> marked = new ArrayList<Cell>();
 	
 	public EESAgent (NettleSweeper ns) {
 		super(ns);
 		covered = this.getCovered();
 		uncovered = this.getUncovered();
-		marked = this.getMarked();
 		currentWorld = this.getCurrentWorld();
 	}
 	
@@ -23,16 +21,15 @@ public class EESAgent extends BasicAgent {
 		ArrayList<Cell> frontiers = getFrontiers();
 		ArrayList<ArrayList<Cell>> borderingPairs = getBorderingPairs(frontiers);
 		Cell cellA, cellB;
-		int cellAMarked, cellBMarked, diff;
+		int diff;
 		ArrayList<Cell> unmarkedSetA, unmarkedSetB, setDiff;
 		for (int i = 0; i < borderingPairs.size(); i++) {
+			// refer to the pair as cell A and cell B
 			cellA = borderingPairs.get(i).get(0);
 			cellB = borderingPairs.get(i).get(1);
-			cellAMarked = getMarkedNeighborsCount(cellA.getRow(), cellA.getCol());
-			cellBMarked = getMarkedNeighborsCount(cellB.getRow(), cellB.getCol());
-			// diff = |(cellA_number - cellA_marked) - (cellB_number - cellB_marked)| 
-			diff = Math.abs((cellA.getNumber() - cellAMarked) 
-					- (cellB.getNumber() - cellBMarked));
+			// calculate diff
+			diff = getDiff(cellA, cellB);
+			// get unmarked neighbors of both cells
 			unmarkedSetA = getUnmarkedNeighbors(cellA.getRow(), cellA.getCol());
 			unmarkedSetB = getUnmarkedNeighbors(cellB.getRow(), cellB.getCol());
 			// check for overlaps
@@ -40,7 +37,7 @@ public class EESAgent extends BasicAgent {
 			if (unmarkedSetA.containsAll(unmarkedSetB) || unmarkedSetB.containsAll(unmarkedSetA)) {
 				setDiff = getSetDiff(unmarkedSetA,unmarkedSetB);
 				// open cells if 0
-				// mark cells if 1
+				// mark cells if diff is equal to the size of setDiff
 				// otherwise abandon
 				if (diff == 0) {
 					for (Cell cell : setDiff) {
@@ -52,11 +49,13 @@ public class EESAgent extends BasicAgent {
 						markCell(cell.getRow(), cell.getCol());
 					}
 				}
+				attemptToFinish();
 			}
 		}
 	}
 	
 	private ArrayList<Cell> getSetDiff(ArrayList<Cell>setA, ArrayList<Cell> setB) {
+		// get the difference between the two sets
 		ArrayList<Cell> setDiff = new ArrayList<Cell>();
 		if (setA.size() > setB.size()) {
 			setA.removeAll(setB);
@@ -68,7 +67,18 @@ public class EESAgent extends BasicAgent {
 		return setDiff;
 	}
 	
+	private int getDiff(Cell cellA, Cell cellB) {
+		// calculate diff between the cell pair
+		// diff = |(cellA_number - cellA_marked) - (cellB_number - cellB_marked)| 
+		int cellAMarked = getMarkedNeighborsCount(cellA.getRow(), cellA.getCol());
+		int cellBMarked = getMarkedNeighborsCount(cellB.getRow(), cellB.getCol());
+		int diff = Math.abs((cellA.getNumber() - cellAMarked) 
+				- (cellB.getNumber() - cellBMarked));
+		return diff;
+	}
+	
 	private ArrayList<Cell> getUnmarkedNeighbors(int row, int col) {
+		// get all unmarked neighbors of a cell
 		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
 		ArrayList<Cell> unmarked = new ArrayList<Cell>();
 		for (Cell neighbor : neighbors) {
@@ -80,6 +90,7 @@ public class EESAgent extends BasicAgent {
 	}
 	
 	private int getMarkedNeighborsCount(int row, int col) {
+		// get the number of marked neighbors of a cell 
 		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
 		int nettleCount = 0;
 		for (Cell neighbor : neighbors) {
@@ -105,7 +116,7 @@ public class EESAgent extends BasicAgent {
 	}
 	
 	private ArrayList<ArrayList<Cell>> getBorderingPairs(ArrayList<Cell> frontiers) {
-		// need to refine this
+		// create a list of bordering pairs
 		ArrayList<ArrayList<Cell>> borderingPairs = new ArrayList<ArrayList<Cell>>();
 		ArrayList<Cell> borderingCells = new ArrayList<Cell>();
 		boolean duplicate;
@@ -128,6 +139,7 @@ public class EESAgent extends BasicAgent {
 	
 	private boolean checkDuplicatePairs(ArrayList<ArrayList<Cell>> borderingPairs
 			, ArrayList<Cell> pair) {
+		// make sure that there is no duplicate bordering pairs
 		boolean duplicate = false;
 		for (int i = 0; i < borderingPairs.size(); i++) {
 			if (borderingPairs.get(i).containsAll(pair)) {
@@ -140,6 +152,7 @@ public class EESAgent extends BasicAgent {
 	}
 	
 	private ArrayList<Cell> getBorderingCells(int row, int col) {
+		// get cells in north, south, east, and west direction
 		ArrayList<Cell> borderingCells = new ArrayList<Cell>();
 		// cell to the north
 		if (isValidNeighbor(row - 1, col)) {
@@ -161,6 +174,7 @@ public class EESAgent extends BasicAgent {
 	}
 	
 	private boolean coveredNeighborExist(int row, int col) {
+		// check if covered neighbor exists
 		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
 		for (Cell neighbor : neighbors) {
 			if (covered.contains(neighbor)) {

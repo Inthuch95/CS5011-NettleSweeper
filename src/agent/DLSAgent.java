@@ -18,4 +18,8 @@ public class DLSAgent extends BasicAgent {
 		marked = this.getMarked();
 		currentWorld = this.getCurrentWorld();
 	}
+	
+	public void DLStrategy () {
+		
+	}
 }
