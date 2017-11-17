@@ -6,6 +6,7 @@ public class NettleSweeper {
 	
 	public NettleSweeper(int[][] world) {
 		this.world = world;
+		createGameEnvironment();
 	}
 	
 	public int getCellNumber(int row, int col) {
