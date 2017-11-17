@@ -12,17 +12,17 @@ public class BasicAgent {
 	private NettleSweeper ns;
 	private Cell[][] currentWorld;
 	private boolean gameOver = false;
-	private ArrayList<Cell> covered = new ArrayList<Cell>();
-	private ArrayList<Cell> uncovered = new ArrayList<Cell>();
-	private ArrayList<Cell> marked = new ArrayList<Cell>();
+	private ArrayList<Cell> covered;
+	private ArrayList<Cell> uncovered;
+	private ArrayList<Cell> marked;
 	private boolean worldChanged;
 	private int randomGuess = 0;
 	private int totalNettle;
 	
 	public BasicAgent(NettleSweeper ns) {
 		this.ns = ns;
-		totalNettle = ns.getNumberOfNettle();
-		createGameWorld();
+		currentWorld = ns.createGameEnvironment();
+		createKnowledgeBase();
 	}
 	
 	public void singlePointStrategy() {
@@ -270,15 +270,14 @@ public class BasicAgent {
 		}
 	}
 	
-	private void createGameWorld() {
-		// create game world for the agent
-		// all cells are covered at the beginning
-		int dimension = ns.getDimension();
-		currentWorld = new Cell[dimension][dimension];
-		for (int i = 0; i < dimension; i++) {
-			for (int j = 0;j < dimension;j++) {
-				currentWorld[i][j] = new Cell(i, j, UNMARKED);
-				covered.add(currentWorld[i][j]);
+	private void createKnowledgeBase() {
+		totalNettle = ns.getNumberOfNettle();
+		covered = new ArrayList<Cell>();
+		uncovered = new ArrayList<Cell>();
+		marked = new ArrayList<Cell>();
+		for (int row = 0; row < currentWorld.length; row++) {
+			for (int col = 0; col < currentWorld.length; col++) {
+				covered.add(currentWorld[row][col]);
 			}
 		}
 	}

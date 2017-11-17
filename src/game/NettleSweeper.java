@@ -11,10 +11,6 @@ public class NettleSweeper {
 		return this.world[row][col];
 	}
 	
-	public int getDimension() {
-		return this.world.length;
-	}
-	
 	public int getNumberOfNettle() {
 		int nettle = 0;
 		for (int row = 0; row < world.length; row++) {
@@ -25,6 +21,19 @@ public class NettleSweeper {
 			}
 		}
 		return nettle;
+	}
+	
+	public Cell[][] createGameEnvironment() {
+		// create game world for the agent
+		// all cells are covered at the beginning
+		Cell[][] currentWorld = new Cell[world.length][world.length];
+		final int UNMARKED = -2;
+		for (int i = 0; i < world.length; i++) {
+			for (int j = 0;j < world.length;j++) {
+				currentWorld[i][j] = new Cell(i, j, UNMARKED);
+			}
+		}
+		return currentWorld;
 	}
 	
 	public boolean isGameOver(int cellNumber) {
