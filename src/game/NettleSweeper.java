@@ -2,6 +2,7 @@ package game;
 
 public class NettleSweeper {
 	private int[][] world;
+	private Cell[][] initialWorld;
 	
 	public NettleSweeper(int[][] world) {
 		this.world = world;
@@ -9,6 +10,10 @@ public class NettleSweeper {
 	
 	public int getCellNumber(int row, int col) {
 		return this.world[row][col];
+	}
+	
+	public Cell[][] getEnvironment() {
+		return this.initialWorld;
 	}
 	
 	public int getNumberOfNettle() {
@@ -23,17 +28,16 @@ public class NettleSweeper {
 		return nettle;
 	}
 	
-	public Cell[][] createGameEnvironment() {
+	public void createGameEnvironment() {
 		// create game world for the agent
 		// all cells are covered at the beginning
-		Cell[][] currentWorld = new Cell[world.length][world.length];
+		initialWorld = new Cell[world.length][world.length];
 		final int UNMARKED = -2;
 		for (int i = 0; i < world.length; i++) {
 			for (int j = 0;j < world.length;j++) {
-				currentWorld[i][j] = new Cell(i, j, UNMARKED);
+				initialWorld[i][j] = new Cell(i, j, UNMARKED);
 			}
 		}
-		return currentWorld;
 	}
 	
 	public boolean isGameOver(int cellNumber) {

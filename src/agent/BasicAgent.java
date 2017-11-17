@@ -21,7 +21,7 @@ public class BasicAgent {
 	
 	public BasicAgent(NettleSweeper ns) {
 		this.ns = ns;
-		currentWorld = ns.createGameEnvironment();
+		currentWorld = ns.getEnvironment();
 		createKnowledgeBase();
 	}
 	
