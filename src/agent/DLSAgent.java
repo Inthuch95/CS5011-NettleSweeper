@@ -51,8 +51,12 @@ public class DLSAgent extends BasicAgent {
 		ArrayList<Cell> frontiers = getFrontiers();
 		// create options for all cells
 		ArrayList<String> optionsList = getLogicOptionsList(frontiers);
+//		for (String options : optionsList) {
+//			System.out.println(options);
+//		}
 		// create KBU string
 		String KBU = getKBU(optionsList);
+//		System.out.println(KBU);
 		// get cells that we need to analyze 
 		ArrayList<Cell> unmarked = getUnmarkedNeighborsForAllCells(frontiers);
 		// try to find nettles first
@@ -64,7 +68,6 @@ public class DLSAgent extends BasicAgent {
 	}
 	
 	private void proveNettle(ArrayList<Cell> unmarked, String KBU) {
-		System.out.println(KBU);
 		ArrayList<Cell> removeSet = new ArrayList<Cell>();
 		String p;
 		String prove;
