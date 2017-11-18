@@ -148,14 +148,14 @@ public class BasicAgent {
 		}
 	}
 	
-	private void openAllCells() {
-		// open the remaining cells
-		ArrayList<Cell> remainingCells = new ArrayList<Cell>();
-		remainingCells.addAll(covered);
-		for (Cell cell : remainingCells) {
-			openCell(cell.getRow(), cell.getCol());
-		}
-	}
+//	private void openAllCells() {
+//		// open the remaining cells
+//		ArrayList<Cell> remainingCells = new ArrayList<Cell>();
+//		remainingCells.addAll(covered);
+//		for (Cell cell : remainingCells) {
+//			openCell(cell.getRow(), cell.getCol());
+//		}
+//	}
 	
 	protected void markCell(int row, int col) {
 		System.out.println("mark " + row + " " + col);
@@ -178,12 +178,13 @@ public class BasicAgent {
 	
 	protected void attemptToFinish() {
 		// uncover/mark the rest of the cells if it is safe to do so
+//		if (marked.size() == totalNettle) {
+//			System.out.println("marked all nettles...");
+//			System.out.println("revealing the rest of the cells...");
+//			openAllCells();
+//		}
 		int remainingNettle = totalNettle - marked.size();
-		if (marked.size() == totalNettle) {
-			System.out.println("marked all nettles...");
-			System.out.println("revealing the rest of the cells...");
-			openAllCells();
-		} else if (remainingNettle == covered.size() && !covered.isEmpty()) {
+		if (remainingNettle == covered.size() && !covered.isEmpty()) {
 			System.out.println("uncovered all safe cells...");
 			System.out.println("marking the rest of the cells...");
 			markAllCells();

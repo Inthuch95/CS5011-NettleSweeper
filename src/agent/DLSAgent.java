@@ -23,29 +23,28 @@ public class DLSAgent extends BasicAgent {
 		// uncover cell(0, 0) first
 		openCell(0, 0);
 		printWorld();
-		DLS();
-//		while (!covered.isEmpty()) {
-//			worldChanged = false;
-//			// attempt to use SPS
-//			System.out.println("solving with SPS");
-//			singlePointStrategy();
-//			if (!worldChanged) {
-//				System.out.println("solving with DLS");
-//				DLS();
-//			}
-//			// if other strategies cannot make further changes to the world, resort to RGS
-//			if (!worldChanged) {
-//				System.out.println("resort to RGS");
-//				randomGuessStrategy();
-//			}
-//			// print current status of the nettle world
-//			printWorld();
-//			// if the agent uncover a nettle then the game is over
-//			if (gameOver) {
-//				break;
-//			}
-//		}
-//		printSummary();
+		while (!covered.isEmpty()) {
+			worldChanged = false;
+			// attempt to use SPS
+			System.out.println("solving with SPS");
+			singlePointStrategy();
+			if (!worldChanged) {
+				System.out.println("solving with DLS");
+				DLS();
+			}
+			// if other strategies cannot make further changes to the world, resort to RGS
+			if (!worldChanged) {
+				System.out.println("resort to RGS");
+				randomGuessStrategy();
+			}
+			// print current status of the nettle world
+			printWorld();
+			// if the agent uncover a nettle then the game is over
+			if (gameOver) {
+				break;
+			}
+		}
+		printSummary();
 	}
 
 	private void DLS() {
@@ -56,42 +55,71 @@ public class DLSAgent extends BasicAgent {
 		String KBU = getKBU(optionsList);
 		// get cells that we need to analyze 
 		ArrayList<Cell> unmarked = getUnmarkedNeighborsForAllCells(frontiers);
-		System.out.println(KBU);
 		// try to find nettles first
-		proveNettle(unmarked);
+		proveNettle(unmarked, KBU);
 		// if the set is not empty yet then try to find clear cells
 		if (!unmarked.isEmpty()) {
-			proveClear(unmarked);
+			proveNotNettle(unmarked, KBU);
 		}
 	}
 	
-	private void proveNettle(ArrayList<Cell> unmarked) {
-		String p = "N21";
-		System.out.println("ProveNettle " + p);
-		String KBU = "((N20 & ~N21 & ~N22) | (~N20 & N21 & ~N22) | (~N20 & ~N21 & N22)) "
-				+ "& ((N20 & ~N21) | (~N20 & N21)) & ((N21 & ~N22) | (~N21 & N22))";
-		String prove = KBU + " & ~" + p;
-		boolean ans = getDPLLSatisfiableStatus(prove);
-		System.out.println("Does KBU entail " + p + "?, Test KBU & ~" + p);
-		if (!ans) {// if false mark
-			System.out.println("Yes, Nettle, Mark");
-		} else {
-			System.out.println("No");
+	private void proveNettle(ArrayList<Cell> unmarked, String KBU) {
+		System.out.println(KBU);
+		ArrayList<Cell> removeSet = new ArrayList<Cell>();
+		String p;
+		String prove;
+		boolean ans;
+		for (Cell cell : unmarked) {
+			p = "N" + cell.getRow() + cell.getCol();
+			System.out.println("ProveNettle " + p);
+			prove = KBU + " & ~" + p;
+			ans = getDPLLSatisfiableStatus(prove);
+			System.out.println("Does KBU entail " + p + "?, Test KBU & ~" + p);
+			if (!ans) {// if false mark
+				System.out.println("Yes, Nettle, Mark");
+				markCell(cell.getRow(), cell.getCol());
+				removeSet.add(cell);
+			} else {
+				System.out.println("No");
+			}
+			System.out.println("");
 		}
+		// remove cells that are marked as nettle
+		unmarked.removeAll(removeSet);
 	}
 	
-	private void proveClear(ArrayList<Cell> unmarked) {
-		
+	private void proveNotNettle(ArrayList<Cell> unmarked, String KBU) {
+		ArrayList<Cell> removeSet = new ArrayList<Cell>();
+		String p;
+		String prove;
+		boolean ans;
+		for (Cell cell : unmarked) {
+			p = "N" + cell.getRow() + cell.getCol();
+			System.out.println("ProveNotNettle " + p);
+			prove = KBU + " & " + p;
+			ans = getDPLLSatisfiableStatus(prove);
+			System.out.println("Does KBU entail " + p + "?, Test KBU & " + p);
+			if (!ans) {// if false mark
+				System.out.println("Yes, No Nettle, Probe");
+				openCell(cell.getRow(), cell.getCol());
+				removeSet.add(cell);
+			} else {
+				System.out.println("No");
+			}
+			System.out.println("");
+		}
+		// remove cells that are marked as nettle
+		unmarked.removeAll(removeSet);
 	}
 	
 	private boolean getDPLLSatisfiableStatus(String query) {
 		PLParser parser = new PLParser();
 		Sentence sent = (Sentence) parser.parse(query);
 		if (dpll.dpllSatisfiable(sent)) {
-//			System.out.println("Query is satisfiable");
+			System.out.println("Query is satisfiable");
 			return true;
 			} else {
-//			System.out.println("Query is NOT satisfiable");
+			System.out.println("Query is NOT satisfiable");
 			return false;
 			}
 	}
@@ -127,11 +155,12 @@ public class DLSAgent extends BasicAgent {
 		ArrayList<Cell> unmarked;
 		String options;
 		Cell cell;
-		int nettleCount;
+		int nettleCount, markedCount;
 		for (int i = 0; i < frontiers.size(); i++) {
 			cell = frontiers.get(i);
 			unmarked = getUnmarkedNeighbors(cell.getRow(), cell.getCol());
-			nettleCount = cell.getNumber();
+			markedCount = getMarkedNeighborsCount(cell.getRow(), cell.getCol());
+			nettleCount = cell.getNumber() - markedCount;
 			possibleNettleSet = getPossibleNettleSet(unmarked, nettleCount);
 			options = getLogicOptions(unmarked, possibleNettleSet);
 			optionsList.add(options);
@@ -209,6 +238,18 @@ public class DLSAgent extends BasicAgent {
 			}
 		}
 		return unmarked;
+	}
+	
+	private int getMarkedNeighborsCount(int row, int col) {
+		// get the number of marked neighbors of a cell 
+		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
+		int nettleCount = 0;
+		for (Cell neighbor : neighbors) {
+			if (neighbor.getNumber() == MARKED) {
+				nettleCount++;
+			}
+		}
+		return nettleCount;
 	}
 	
 	private ArrayList<Cell> getFrontiers() {
