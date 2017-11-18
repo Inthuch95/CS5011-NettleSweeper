@@ -180,7 +180,7 @@ public class Worlds {
 	 * @param worldNumber - indicates the chosen world
 	 * @return nettle world corresponding with worldNumber
 	 */
-	public int[][] getEasyWorld(int worldNumber) {
+	protected int[][] getEasyWorld(int worldNumber) {
 		switch (worldNumber) {
 			case 1:
 				return this.easy1;
@@ -202,7 +202,7 @@ public class Worlds {
 	 * @param worldNumber - indicates the chosen world
 	 * @return nettle world corresponding with worldNumber
 	 */
-	public int[][] getMediumWorld(int worldNumber) {
+	protected int[][] getMediumWorld(int worldNumber) {
 		switch (worldNumber) {
 			case 1:
 				return this.medium1;
@@ -224,7 +224,7 @@ public class Worlds {
 	 * @param worldNumber - indicates the chosen world
 	 * @return nettle world corresponding with worldNumber
 	 */
-	public int[][] getHardWorld(int worldNumber) {
+	protected int[][] getHardWorld(int worldNumber) {
 		switch (worldNumber) {
 			case 1:
 				return this.hard1;

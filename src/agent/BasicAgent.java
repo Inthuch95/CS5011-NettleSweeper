@@ -7,17 +7,17 @@ import game.Cell;
 import game.NettleSweeper;
 
 public class BasicAgent {
-	protected final int UNMARKED = -2;
-	protected final int MARKED = -3; 
 	private NettleSweeper ns;
-	private Cell[][] currentWorld;
-	private boolean gameOver = false;
-	private ArrayList<Cell> covered;
-	private ArrayList<Cell> uncovered;
-	private ArrayList<Cell> marked;
-	private boolean worldChanged;
 	private int randomGuess = 0;
 	private int totalNettle;
+	protected Cell[][] currentWorld;
+	protected final int UNMARKED = -2;
+	protected final int MARKED = -3; 
+	protected boolean gameOver = false;
+	protected ArrayList<Cell> covered;
+	protected ArrayList<Cell> uncovered;
+	protected ArrayList<Cell> marked;
+	protected boolean worldChanged;
 	
 	public BasicAgent(NettleSweeper ns) {
 		this.ns = ns;
@@ -25,7 +25,31 @@ public class BasicAgent {
 		createKnowledgeBase();
 	}
 	
-	public void singlePointStrategy() {
+	public void solveNettleWorld() {
+		// uncover cell(0, 0) first
+		openCell(0, 0);
+		printWorld();
+		while (!covered.isEmpty()) {
+			worldChanged = false;
+			// attempt to use SPS
+			System.out.println("solving with SPS");
+			singlePointStrategy();
+			// if SPS cannot make further changes to the world, resort to RGS
+			if (!worldChanged) {
+				System.out.println("resort to RGS");
+				randomGuessStrategy();
+			}
+			// print current status of the nettle world
+			printWorld();
+			// if the agent uncover a nettle then the game is over
+			if (gameOver) {
+				break;
+			}
+		}
+		printSummary();
+	} 
+	
+	protected void singlePointStrategy() {
 		for (int row = 0; row < currentWorld.length; row++) {
 			for (int col = 0; col < currentWorld.length; col++) {
 				if (covered.contains(currentWorld[row][col])) {
@@ -87,7 +111,7 @@ public class BasicAgent {
 		}
 	}
 	
-	public void randomGuessStrategy() {
+	protected void randomGuessStrategy() {
 		// pick a random cell from covered list and uncover that cell
 		Random randomGenerator = new Random();
 		int index = randomGenerator.nextInt(covered.size());
@@ -97,7 +121,7 @@ public class BasicAgent {
 		attemptToFinish();
 	}
 	
-	public void openCell(int row, int col) {
+	protected void openCell(int row, int col) {
 		System.out.println("reveal " + row + " " + col);
 		// ask the game to reveal the number behind the cell 
 		int number = ns.getCellNumber(row, col);
@@ -113,7 +137,7 @@ public class BasicAgent {
 		gameOver = ns.isGameOver(currentWorld[row][col].getNumber());
 	}
 	
-	public void openAllNeighborCells(int row, int col) {
+	private void openAllNeighborCells(int row, int col) {
 		// open all valid neighbors of current cell
 		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
 		
@@ -124,7 +148,7 @@ public class BasicAgent {
 		}
 	}
 	
-	public void openAllCells() {
+	private void openAllCells() {
 		// open the remaining cells
 		ArrayList<Cell> remainingCells = new ArrayList<Cell>();
 		remainingCells.addAll(covered);
@@ -133,7 +157,7 @@ public class BasicAgent {
 		}
 	}
 	
-	public void markCell(int row, int col) {
+	protected void markCell(int row, int col) {
 		System.out.println("mark " + row + " " + col);
 		// mark the cell indicating that it contains nettle
 		currentWorld[row][col].setNumber(MARKED);
@@ -143,7 +167,7 @@ public class BasicAgent {
 		worldChanged = true;
 	}
 	
-	public void markAllCells() {
+	private void markAllCells() {
 		// mark the remaining cells
 		ArrayList<Cell> remainingCells = new ArrayList<Cell>();
 		remainingCells.addAll(covered);
@@ -152,7 +176,7 @@ public class BasicAgent {
 		}
 	}
 	
-	public void attemptToFinish() {
+	protected void attemptToFinish() {
 		// uncover/mark the rest of the cells if it is safe to do so
 		int remainingNettle = totalNettle - marked.size();
 		if (marked.size() == totalNettle) {
@@ -166,7 +190,7 @@ public class BasicAgent {
 		}
 	}
 	
-	public ArrayList<Cell> getAllNeighbors(int row, int col) {
+	protected ArrayList<Cell> getAllNeighbors(int row, int col) {
 		ArrayList<Cell> neighbors = new ArrayList<Cell>();
 		// cell to the north
 		if (isValidNeighbor(row - 1, col)) {
@@ -203,48 +227,12 @@ public class BasicAgent {
  		return neighbors;
 	}
 	
-	public boolean isValidNeighbor(int row, int col) {
+	protected boolean isValidNeighbor(int row, int col) {
 		// returns true if cell is not out of bound
 		return !(row < 0 || row >= currentWorld.length || col < 0 || col >= currentWorld.length);
 	}
 	
-	public boolean getGameOver() {
-		return this.gameOver;
-	}
-	
-	public Cell[][] getCurrentWorld() {
-		return this.currentWorld;
-	}
-	
-	public ArrayList<Cell> getCovered() {
-		return this.covered;
-	}
-	
-	public ArrayList<Cell> getUncovered() {
-		return this.uncovered;
-	}
-	
-	public ArrayList<Cell> getMarked() {
-		return this.marked;
-	}
-	
-	public boolean getWorldChanged() {
-		return this.worldChanged;
-	}
-	
-	public int getTotalNettle() {
-		return this.totalNettle;
-	}
-	
-	public int getRandomGuess() {
-		return this.randomGuess;
-	}
-	
-	public void setWorldChanged(boolean status) {
-		worldChanged = status;
-	}
-	
-	public void printWorld() {
+	protected void printWorld() {
 		// print the status of current world
 		System.out.println("--------------------");
 		for (int i = 0; i < currentWorld.length; i++) {
@@ -256,7 +244,7 @@ public class BasicAgent {
 		System.out.println("--------------------");
 	}
 	
-	public void printSummary() {
+	protected void printSummary() {
 		if (!gameOver) {
 			System.out.println("\nSummary");
 			printWorld();

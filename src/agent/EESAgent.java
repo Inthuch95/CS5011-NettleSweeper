@@ -6,18 +6,39 @@ import game.Cell;
 import game.NettleSweeper;
 
 public class EESAgent extends BasicAgent {
-	private Cell[][] currentWorld;
-	private ArrayList<Cell> covered = new ArrayList<Cell>();
-	private ArrayList<Cell> uncovered = new ArrayList<Cell>();
-	
 	public EESAgent (NettleSweeper ns) {
 		super(ns);
-		covered = this.getCovered();
-		uncovered = this.getUncovered();
-		currentWorld = this.getCurrentWorld();
 	}
 	
-	public void easyEquationStrategy() {
+	public void solveNettleWorld() {
+		// uncover cell(0, 0) first
+		openCell(0, 0);
+		printWorld();
+		while (!covered.isEmpty()) {
+			worldChanged = false;
+			// attempt to use SPS
+			System.out.println("solving with SPS");
+			singlePointStrategy();
+			if (!worldChanged) {
+				System.out.println("solving with ESS");
+				easyEquationStrategy();
+			}
+			// if other strategies cannot make further changes to the world, resort to RGS
+			if (!worldChanged) {
+				System.out.println("resort to RGS");
+				randomGuessStrategy();
+			}
+			// print current status of the nettle world
+			printWorld();
+			// if the agent uncover a nettle then the game is over
+			if (gameOver) {
+				break;
+			}
+		}
+		printSummary();
+	}
+	
+	private void easyEquationStrategy() {
 		ArrayList<Cell> frontiers = getFrontiers();
 		ArrayList<ArrayList<Cell>> borderingPairs = getBorderingPairs(frontiers);
 		Cell cellA, cellB;

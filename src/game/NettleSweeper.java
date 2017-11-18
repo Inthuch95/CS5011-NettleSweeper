@@ -4,8 +4,8 @@ public class NettleSweeper {
 	private int[][] world;
 	private Cell[][] initialWorld;
 	
-	public NettleSweeper(int[][] world) {
-		this.world = world;
+	public NettleSweeper(String difficulty, int worldNumber) {
+		getChosenWorld(difficulty, worldNumber);
 		createGameEnvironment();
 	}
 	
@@ -29,7 +29,19 @@ public class NettleSweeper {
 		return nettle;
 	}
 	
-	public void createGameEnvironment() {
+	private void getChosenWorld(String difficulty, int worldNumber) {
+		// get the nettle world based on difficulty and world number
+		Worlds w = new Worlds();
+		if (difficulty.equals("easy")) {
+			world = w.getEasyWorld(worldNumber);
+		} else if (difficulty.equals("medium")) {
+			world = w.getMediumWorld(worldNumber);
+		} else {
+			world = w.getHardWorld(worldNumber);
+		}
+	}
+	
+	private void createGameEnvironment() {
 		// create game world for the agent
 		// all cells are covered at the beginning
 		initialWorld = new Cell[world.length][world.length];

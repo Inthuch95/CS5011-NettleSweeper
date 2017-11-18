@@ -1,30 +1,47 @@
 package agent;
 
-import java.util.ArrayList;
-
 import aima.core.logic.propositional.parsing.ast.Sentence;
 import aima.core.logic.propositional.inference.DPLLSatisfiable;
 import aima.core.logic.propositional.parsing.PLParser;
-import game.Cell;
 import game.NettleSweeper;
 
 public class DLSAgent extends BasicAgent {
-	private Cell[][] currentWorld;
-	private ArrayList<Cell> covered = new ArrayList<Cell>();
-	private ArrayList<Cell> uncovered = new ArrayList<Cell>();
-	private ArrayList<Cell> marked = new ArrayList<Cell>();
 	private static DPLLSatisfiable dpll = new DPLLSatisfiable();
-
 
 	public DLSAgent(NettleSweeper ns) {
 		super(ns);
-		covered = this.getCovered();
-		uncovered = this.getUncovered();
-		marked = this.getMarked();
-		currentWorld = this.getCurrentWorld();
+	}
+	
+	public void solveNettleWorld() {
+		// uncover cell(0, 0) first
+		openCell(0, 0);
+		printWorld();
+		DLS();
+//		while (!covered.isEmpty()) {
+//			worldChanged = false;
+//			// attempt to use SPS
+//			System.out.println("solving with SPS");
+//			singlePointStrategy();
+//			if (!worldChanged) {
+//				System.out.println("solving with DLS");
+//				DLS();
+//			}
+//			// if other strategies cannot make further changes to the world, resort to RGS
+//			if (!worldChanged) {
+//				System.out.println("resort to RGS");
+//				randomGuessStrategy();
+//			}
+//			// print current status of the nettle world
+//			printWorld();
+//			// if the agent uncover a nettle then the game is over
+//			if (gameOver) {
+//				break;
+//			}
+//		}
+//		printSummary();
 	}
 
-	public void DLS() {
+	private void DLS() {
 		String p = "N21";
 		System.out.println("ProveNettle " + p);
 		String KBU = "((N20 & ~N21 & ~N22) | (~N20 & N21 & ~N22) | (~N20 & ~N21 & N22)) "
@@ -39,7 +56,7 @@ public class DLSAgent extends BasicAgent {
 		}
 	}
 	
-	public static boolean displayDPLLSatisfiableStatus(String query) {
+	private static boolean displayDPLLSatisfiableStatus(String query) {
 		PLParser parser = new PLParser();
 		Sentence sent = (Sentence) parser.parse(query);
 		if (dpll.dpllSatisfiable(sent)) {
