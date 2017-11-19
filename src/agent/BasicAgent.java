@@ -55,7 +55,6 @@ public class BasicAgent {
 			for (int col = 0; col < currentWorld.length; col++) {
 				if (covered.contains(currentWorld[row][col])) {
 					takeAppropriateAction(row, col);
-					attemptToFinish();
 				}
 			}
 		}
@@ -119,7 +118,6 @@ public class BasicAgent {
 		Cell cell = covered.get(index);
 		openCell(cell.getRow(), cell.getCol());
 		randomGuess++;
-		attemptToFinish();
 	}
 	
 	protected void openCell(int row, int col) {
@@ -157,25 +155,6 @@ public class BasicAgent {
 		covered.remove(currentWorld[row][col]);
 		marked.add(currentWorld[row][col]);
 		worldChanged = true;
-	}
-	
-	private void markAllCells() {
-		// mark the remaining cells
-		ArrayList<Cell> remainingCells = new ArrayList<Cell>();
-		remainingCells.addAll(covered);
-		for (Cell cell : remainingCells) {
-			markCell(cell.getRow(), cell.getCol());
-		}
-	}
-	
-	protected void attemptToFinish() {
-		// mark the rest of the cells if all safe cells are uncovered
-		int remainingNettle = totalNettle - marked.size();
-		if (remainingNettle == covered.size() && !covered.isEmpty()) {
-			System.out.println("uncovered all safe cells...");
-			System.out.println("marking the rest of the cells...");
-			markAllCells();
-		}
 	}
 	
 	protected ArrayList<Cell> getAllNeighbors(int row, int col) {

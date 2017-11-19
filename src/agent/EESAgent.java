@@ -71,7 +71,6 @@ public class EESAgent extends BasicAgent {
 						markCell(cell.getRow(), cell.getCol());
 					}
 				}
-				attemptToFinish();
 			}
 		}
 	}
