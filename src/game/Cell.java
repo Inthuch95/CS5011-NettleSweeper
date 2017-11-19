@@ -5,6 +5,9 @@ package game;
  *
  */
 public class Cell {
+	private final int UNMARKED = -2;
+	private final int MARKED = -3;
+	private final int NETTLE = -1; 
 	private int row, col, number;
 	
 	public Cell(int row, int col, int number) {
@@ -54,16 +57,21 @@ public class Cell {
 	public String toString() {
 		// print the state of the cell
 		String output;
-		if (this.number == -2) {
-			output = "#";
-		} else if (this.number == -3) {
-			output = "F";
-		} else if (this.number == -1) {
-			output = "N";
-		} else {
-			output = Integer.toString(this.number);
+		switch (this.number) {
+			case UNMARKED:
+				output = "#";
+				break;
+			case MARKED:
+				output = "F";
+				break;
+			case NETTLE:
+				output = "N";
+				break;
+			default:
+				output = Integer.toString(this.number);
+				break;
 		}
-		
 		return output;
 	}
+	
 }

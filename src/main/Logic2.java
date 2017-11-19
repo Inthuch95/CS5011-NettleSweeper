@@ -11,7 +11,7 @@ public class Logic2 {
 		NettleSweeper ns = new NettleSweeper(difficulty, worldNumber);
 		EESAgent agent = new EESAgent(ns);
 		// use the logical agent to solve the nettle world
-		System.out.println("Nettle World\n");
+		System.out.println("Nettle World: " + difficulty + " " + worldNumber + "\n");
 		agent.solveNettleWorld();
 	}
 }

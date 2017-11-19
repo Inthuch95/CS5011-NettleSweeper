@@ -20,6 +20,7 @@ public class DLSAgent extends BasicAgent {
 	}
 	
 	public void solveNettleWorld() {
+		printWorld();
 		// uncover cell(0, 0) first
 		openCell(0, 0);
 		printWorld();
@@ -279,4 +280,5 @@ public class DLSAgent extends BasicAgent {
 		}
 		return false;
 	}
+	
 }

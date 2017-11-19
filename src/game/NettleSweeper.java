@@ -1,10 +1,16 @@
 package game;
 
 public class NettleSweeper {
+	private final int UNMARKED = -2;
+	private final int NETTLE = -1; 
 	private int[][] world;
 	private Cell[][] initialWorld;
+	private String difficulty;
+	private int worldNumber;
 	
 	public NettleSweeper(String difficulty, int worldNumber) {
+		this.difficulty = difficulty;
+		this.worldNumber = worldNumber;
 		getChosenWorld(difficulty, worldNumber);
 		createGameEnvironment();
 	}
@@ -21,12 +27,20 @@ public class NettleSweeper {
 		int nettle = 0;
 		for (int row = 0; row < world.length; row++) {
 			for (int col = 0; col < world.length; col++) {
-				if (world[row][col] == -1) {
+				if (world[row][col] == NETTLE) {
 					nettle++;
 				}
 			}
 		}
 		return nettle;
+	}
+	
+	public String getDifficulty() {
+		return this.difficulty;
+	}
+	
+	public int getWorldNumber() {
+		return this.worldNumber;
 	}
 	
 	private void getChosenWorld(String difficulty, int worldNumber) {
@@ -45,7 +59,6 @@ public class NettleSweeper {
 		// create game world for the agent
 		// all cells are covered at the beginning
 		initialWorld = new Cell[world.length][world.length];
-		final int UNMARKED = -2;
 		for (int i = 0; i < world.length; i++) {
 			for (int j = 0;j < world.length;j++) {
 				initialWorld[i][j] = new Cell(i, j, UNMARKED);
@@ -54,7 +67,7 @@ public class NettleSweeper {
 	}
 	
 	public boolean isGameOver(int cellNumber) {
-		if (cellNumber == -1) {
+		if (cellNumber == NETTLE) {
 			return true;
 		}
 		return false;

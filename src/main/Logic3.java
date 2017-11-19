@@ -12,7 +12,8 @@ public class Logic3 {
 		NettleSweeper ns = new NettleSweeper(difficulty, worldNumber);
 		DLSAgent agent = new DLSAgent(ns);
 		// use the logical agent to solve the nettle world
-		System.out.println("Nettle World\n");
+		System.out.println("Nettle World: " + difficulty + " " + worldNumber + "\n");
 		agent.solveNettleWorld();
 	}
+	
 }

@@ -26,6 +26,7 @@ public class BasicAgent {
 	}
 	
 	public void solveNettleWorld() {
+		printWorld();
 		// uncover cell(0, 0) first
 		openCell(0, 0);
 		printWorld();
@@ -148,15 +149,6 @@ public class BasicAgent {
 		}
 	}
 	
-//	private void openAllCells() {
-//		// open the remaining cells
-//		ArrayList<Cell> remainingCells = new ArrayList<Cell>();
-//		remainingCells.addAll(covered);
-//		for (Cell cell : remainingCells) {
-//			openCell(cell.getRow(), cell.getCol());
-//		}
-//	}
-	
 	protected void markCell(int row, int col) {
 		System.out.println("mark " + row + " " + col);
 		// mark the cell indicating that it contains nettle
@@ -177,12 +169,7 @@ public class BasicAgent {
 	}
 	
 	protected void attemptToFinish() {
-		// uncover/mark the rest of the cells if it is safe to do so
-//		if (marked.size() == totalNettle) {
-//			System.out.println("marked all nettles...");
-//			System.out.println("revealing the rest of the cells...");
-//			openAllCells();
-//		}
+		// mark the rest of the cells if all safe cells are uncovered
 		int remainingNettle = totalNettle - marked.size();
 		if (remainingNettle == covered.size() && !covered.isEmpty()) {
 			System.out.println("uncovered all safe cells...");
@@ -249,13 +236,15 @@ public class BasicAgent {
 		if (!gameOver) {
 			System.out.println("\nSummary");
 			printWorld();
-			System.out.println("game won");
+			System.out.println("nettle world: " + ns.getDifficulty() + " " + ns.getWorldNumber());
 			System.out.println("random guess: " + randomGuess);
+			System.out.println("game won");
 		} else {
 			System.out.println("\nSummary");
 			printWorld();
-			System.out.println("game lost");
+			System.out.println("nettle world: " + ns.getDifficulty() + " " + ns.getWorldNumber());
 			System.out.println("random guess: " + randomGuess);
+			System.out.println("game lost");
 		}
 	}
 	
