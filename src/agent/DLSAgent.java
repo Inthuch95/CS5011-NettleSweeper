@@ -29,6 +29,7 @@ public class DLSAgent extends BasicAgent {
 			// attempt to use SPS
 			System.out.println("solving with SPS");
 			singlePointStrategy();
+			// use DLS if SPS did not make any changes
 			if (!worldChanged) {
 				System.out.println("solving with DLS");
 				DLS();
@@ -60,6 +61,7 @@ public class DLSAgent extends BasicAgent {
 	}
 	
 	private void proveNettle(String KBU) {
+		// prove if the cells contain nettle
 		ArrayList<Cell> coveredCells = new ArrayList<Cell>();
 		coveredCells.addAll(covered);
 		String p;
@@ -82,6 +84,7 @@ public class DLSAgent extends BasicAgent {
 	}
 	
 	private void proveNotNettle(String KBU) {
+		// prove that the cells are clear
 		ArrayList<Cell> coveredCells = new ArrayList<Cell>();
 		coveredCells.addAll(covered);
 		String p;
@@ -116,6 +119,7 @@ public class DLSAgent extends BasicAgent {
 	}
 	
 	private String getKBU(ArrayList<String> optionsList) {
+		// create KBU String
 		String KBU = "";
 		for (int i = 0; i < optionsList.size(); i++) {
 			if (i != 0) {
@@ -127,6 +131,7 @@ public class DLSAgent extends BasicAgent {
 	}
 	
 	private ArrayList<String> getLogicOptionsList(ArrayList<Cell> frontiers) {
+		// get all logic options and store them in an arraylist
 		ArrayList<String> optionsList = new ArrayList<String>();
 		ArrayList<ArrayList<Cell>> possibleNettleSet;
 		ArrayList<Cell> unmarked;
@@ -171,12 +176,15 @@ public class DLSAgent extends BasicAgent {
 	
 	private ArrayList<ArrayList<Cell>> getPossibleNettleSet(ArrayList<Cell> unmarked
 			, int nettleCount) {
+		// get a set of all subsets
 		ArrayList<ArrayList<Cell>> possibleNettleSet = powerSet(unmarked);
+		// only keep the subsets that matches our criteria
 		removeExcessSets(possibleNettleSet, nettleCount);
 		return possibleNettleSet;
 	}
 	
 	private ArrayList<ArrayList<Cell>> powerSet(ArrayList<Cell> originalSet) {
+		// get a set of all subsets
 		ArrayList<ArrayList<Cell>> sets = new ArrayList<ArrayList<Cell>>();
         if (originalSet.isEmpty()) {
             sets.add(new ArrayList<Cell>());
@@ -196,6 +204,7 @@ public class DLSAgent extends BasicAgent {
     }
 	
 	private void removeExcessSets(ArrayList<ArrayList<Cell>> powerSet, int desireLength) {
+		// remove all sets that do not pass the criteria
 		ArrayList<ArrayList<Cell>> removeSet = new ArrayList<ArrayList<Cell>>();
 		for (ArrayList<Cell> set : powerSet) {
 			if (set.size() != desireLength) {

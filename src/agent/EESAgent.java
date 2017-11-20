@@ -20,8 +20,9 @@ public class EESAgent extends BasicAgent {
 			// attempt to use SPS
 			System.out.println("solving with SPS");
 			singlePointStrategy();
+			// use EES if SPS did not make any changes
 			if (!worldChanged) {
-				System.out.println("solving with ESS");
+				System.out.println("solving with EES");
 				easyEquationStrategy();
 			}
 			// if other strategies cannot make further changes to the world, resort to RGS

@@ -50,6 +50,7 @@ public class BasicAgent {
 	} 
 	
 	protected void singlePointStrategy() {
+		// uncover/mark cells with SPS
 		for (int row = 0; row < currentWorld.length; row++) {
 			for (int col = 0; col < currentWorld.length; col++) {
 				if (covered.contains(currentWorld[row][col])) {
@@ -60,6 +61,8 @@ public class BasicAgent {
 	}
 	
 	private void takeAppropriateAction(int row, int col) {
+		// uncover the cell if AFN
+		// mark the cell if AMN
 		ArrayList<Cell> neighbors = getAllNeighbors(row, col);
 		for (Cell neighbor : neighbors) {
 			if (uncovered.contains(neighbor) || marked.contains(neighbor)) {
@@ -124,7 +127,7 @@ public class BasicAgent {
 		// ask the game to reveal the number behind the cell 
 		int number = ns.getCellNumber(row, col);
 		currentWorld[row][col].setNumber(number);
-		// update list of uncovered and covered cells
+		// update knowledge base
 		covered.remove(currentWorld[row][col]);
 		uncovered.add(currentWorld[row][col]);
 		if (number == 0) {
@@ -150,7 +153,7 @@ public class BasicAgent {
 		System.out.println("mark " + row + " " + col);
 		// mark the cell indicating that it contains nettle
 		currentWorld[row][col].setNumber(MARKED);
-		// update list of uncovered and covered cells
+		// update knowledge base
 		covered.remove(currentWorld[row][col]);
 		marked.add(currentWorld[row][col]);
 		worldChanged = true;
@@ -211,6 +214,7 @@ public class BasicAgent {
 	}
 	
 	protected void printSummary() {
+		// print the summary at the end of the game
 		if (!gameOver) {
 			System.out.println("\nSummary");
 			printWorld();
@@ -227,6 +231,7 @@ public class BasicAgent {
 	}
 	
 	private void createKnowledgeBase() {
+		// populate the agent's knowledge base at the beginning of the game
 		covered = new ArrayList<Cell>();
 		uncovered = new ArrayList<Cell>();
 		marked = new ArrayList<Cell>();
