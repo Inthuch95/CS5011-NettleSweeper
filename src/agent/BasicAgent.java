@@ -9,7 +9,6 @@ import game.NettleSweeper;
 public class BasicAgent {
 	private NettleSweeper ns;
 	private int randomGuess = 0;
-	private int totalNettle;
 	protected Cell[][] currentWorld;
 	protected final int UNMARKED = -2;
 	protected final int MARKED = -3; 
@@ -228,7 +227,6 @@ public class BasicAgent {
 	}
 	
 	private void createKnowledgeBase() {
-		totalNettle = ns.getNumberOfNettle();
 		covered = new ArrayList<Cell>();
 		uncovered = new ArrayList<Cell>();
 		marked = new ArrayList<Cell>();
